@@ -8,4 +8,4 @@ export class AuthController {
     async login(@Body('username') username: string, @Body('password') password: string) {
         return this.authService.login(username, password);
     }
-}
+}   
