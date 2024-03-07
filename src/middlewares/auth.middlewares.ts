@@ -1,17 +1,20 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { log } from 'console';
-import { Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-    constructor(private readonly authService: AuthService) {} 
-    use(req: any, res: any, next: (error?: any) => void) {
-        const { username, password } = req.body;  
-        
-        const payload = {username: username};
-        
-        next();
-    }
+  constructor(private readonly jwtService: JwtService) {}
+  use(req: any, res: any, next: () => void) {
+
+      try {
+        const token = req.headers.authorization?.split(' ')[1];
+        const decoded = this.jwtService.verify(token);
+        req.user = decoded; 
+      } catch (error) {
+        return res.status(401).json({
+          message: 'Unauthorized',
+        });
+      }
+
+  }
 }
