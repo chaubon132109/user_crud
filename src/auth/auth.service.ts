@@ -13,6 +13,16 @@ import { ConfigService } from '@nestjs/config';
         
 export class AuthService {
     constructor(private readonly userService : UsersService, private readonly jwtSerVice : JwtService, private readonly configService: ConfigService){}
+    async validateUser(username: string, password: string): Promise<any> {
+        const user = await this.userService.getUserByUsername(username);
+        if(user){
+            const isMatch = await bcrypt.compare(password, user.password);
+            if(isMatch){
+                return user;
+            }
+        }
+        return null;
+    }
     async login(username:string, password:string) : Promise<any> {
         try {
             const user = await this.userService.getUserByUsername(username);

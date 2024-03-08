@@ -7,7 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthMiddleware } from './middlewares/auth.middlewares';
-import { REQUEST } from '@nestjs/core';
+import { APP_GUARD, REQUEST } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
 @Module({
   imports: [
     UsersModule,
@@ -21,11 +22,17 @@ import { REQUEST } from '@nestjs/core';
     })
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+      // {
+      //   provide: APP_GUARD,
+      //   useClass: AuthGuard,
+      // }
+  ],
 })
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes({path:'/users/:id',method: RequestMethod.DELETE});
-  }
-}
+export class AppModule {}
+// export class AppModule implements NestModule{
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(AuthMiddleware).forRoutes({path:'/users/:id',method: RequestMethod.GET});
+//   }
+// }
 
